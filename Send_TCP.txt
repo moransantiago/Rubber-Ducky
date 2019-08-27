@@ -1,0 +1,13 @@
+$port=3000
+$TcpClient=New-Object System.Net.Sockets.TcpClient("18.229.132.96", $port)
+
+$GetStream = $TcpClient.GetStream()
+$StreamWriter = New-Object System.IO.StreamWriter $GetStream
+
+$positions='Hi'
+
+$StreamWriter.Write($positions)
+
+$StreamWriter.Dispose()
+$GetStream.Dispose()
+$TcpClient.Dispose()
