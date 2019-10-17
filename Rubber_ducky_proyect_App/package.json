@@ -1,0 +1,14 @@
+{
+  "name": "rubber_ducky_sockets_app",
+  "version": "1.0.0",
+  "description": "A proyect to obtain the keylogs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Santiago Moran",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
